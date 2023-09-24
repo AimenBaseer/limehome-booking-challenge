@@ -10,7 +10,7 @@ export const app: Express = express();
 app.use(morgan('dev'));
 
 // Parse the request
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Swagger
@@ -37,12 +37,16 @@ export async function startServer() {
     return new Promise((resolve, reject) => {
         const port = 8000;
         server = http.createServer(app);
-        server.listen(port, () => {
-            console.log(`The server is running on http://localhost:${port}`);
-            resolve('Server started');
-        }).on('error', (error) => {
-            reject(error);
-        });
+        server
+            .listen(port, () => {
+                console.log(
+                    `The server is running on http://localhost:${port}`
+                );
+                resolve('Server started');
+            })
+            .on('error', (error) => {
+                reject(error);
+            });
     });
 }
 
@@ -73,8 +77,10 @@ async function initialize() {
     }
 }
 
-initialize().then(() => {
-    console.log('Initialized');
-}).catch((error) => {
-    console.error(error);
-});
+initialize()
+    .then(() => {
+        console.log('Initialized');
+    })
+    .catch((error) => {
+        console.error(error);
+    });
