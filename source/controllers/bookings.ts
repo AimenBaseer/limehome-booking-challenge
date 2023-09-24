@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import prisma from '../prisma'
+import prisma from '../prisma';
 
 interface Booking {
     guestName: string;
@@ -10,11 +10,15 @@ interface Booking {
 
 const healthCheck = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(200).json({
-        message: "OK"
-    })
-}
+        message: 'OK',
+    });
+};
 
-const createBooking = async (req: Request, res: Response, next: NextFunction) => {
+const createBooking = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const booking: Booking = req.body;
 
     let outcome = await isBookingPossible(booking);
@@ -24,17 +28,17 @@ const createBooking = async (req: Request, res: Response, next: NextFunction) =>
 
     let bookingResult = await prisma.booking.create({
         data: {
-             guestName: booking.guestName,
-             unitID: booking.unitID,
-             checkInDate: new Date(booking.checkInDate),
-             numberOfNights: booking.numberOfNights
-       }
-    })
+            guestName: booking.guestName,
+            unitID: booking.unitID,
+            checkInDate: new Date(booking.checkInDate),
+            numberOfNights: booking.numberOfNights,
+        },
+    });
 
     return res.status(200).json(bookingResult);
-}
+};
 
-type bookingOutcome = {result:boolean, reason:string};
+type bookingOutcome = { result: boolean; reason: string };
 
 async function isBookingPossible(booking: Booking): Promise<bookingOutcome> {
     // check 1 : The Same guest cannot book the same unit multiple times
@@ -51,7 +55,10 @@ async function isBookingPossible(booking: Booking): Promise<bookingOutcome> {
         },
     });
     if (sameGuestSameUnit.length > 0) {
-        return {result: false, reason: "The given guest name cannot book the same unit multiple times"};
+        return {
+            result: false,
+            reason: 'The given guest name cannot book the same unit multiple times',
+        };
     }
 
     // check 2 : the same guest cannot be in multiple units at the same time
@@ -63,7 +70,10 @@ async function isBookingPossible(booking: Booking): Promise<bookingOutcome> {
         },
     });
     if (sameGuestAlreadyBooked.length > 0) {
-        return {result: false, reason: "The same guest cannot be in multiple units at the same time"};
+        return {
+            result: false,
+            reason: 'The same guest cannot be in multiple units at the same time',
+        };
     }
 
     // check 3 : Unit is available for the check-in date
@@ -75,15 +85,24 @@ async function isBookingPossible(booking: Booking): Promise<bookingOutcome> {
                 },
                 unitID: {
                     equals: booking.unitID,
-                }
-            }
-        }
+                },
+            },
+        },
     });
     if (isUnitAvailableOnCheckInDate.length > 0) {
-        return {result: false, reason: "For the given check-in date, the unit is already occupied"};
+        return {
+            result: false,
+            reason: 'For the given check-in date, the unit is already occupied',
+        };
     }
 
-    return {result: true, reason: "OK"};
+    return { result: true, reason: 'OK' };
 }
 
-export default { healthCheck, createBooking }
+const getBookings = async (req: Request, res: Response, next: NextFunction) => {
+    const bookings = await prisma.booking.findMany();
+
+    return res.status(200).json(bookings);
+};
+
+export default { healthCheck, createBooking, getBookings };
