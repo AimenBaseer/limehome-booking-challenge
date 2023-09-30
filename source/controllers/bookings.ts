@@ -6,6 +6,7 @@ interface Booking {
     unitID: string;
     checkInDate: Date;
     numberOfNights: number;
+    checkoutDate: Date;
 }
 
 const healthCheck = async (req: Request, res: Response, next: NextFunction) => {
@@ -81,7 +82,10 @@ async function isBookingPossible(booking: Booking): Promise<bookingOutcome> {
         where: {
             AND: {
                 checkInDate: {
-                    equals: new Date(booking.checkInDate),
+                    lte: new Date(booking.checkInDate),
+                },
+                checkoutDate: {
+                    gte: new Date(booking.checkInDate),
                 },
                 unitID: {
                     equals: booking.unitID,
