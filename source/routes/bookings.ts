@@ -5,5 +5,6 @@ const router = express.Router();
 router.get('/', controller.healthCheck);
 router.get('/api/v1/booking/', controller.getBookings);
 router.post('/api/v1/booking/', controller.createBooking);
+router.patch('/api/v1/booking/:id', controller.extendBooking);
 
 export = router;
