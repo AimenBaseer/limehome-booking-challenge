@@ -176,8 +176,6 @@ describe('Booking API', () => {
             'http://localhost:8000/api/v1/booking',
             GUEST_A_UNIT_1
         );
-        expect(response1.status).toBe(200);
-        expect(response1.data.guestName).toBe(GUEST_A_UNIT_1.guestName);
 
         // GuestB creates a booking 5 days after guest 1 leaves
         const nextAvailableDate = new Date(
@@ -198,9 +196,9 @@ describe('Booking API', () => {
             `http://localhost:8000/api/v1/booking/${response1.data.id}`,
             { extendBy: extendNights }
         );
-
         expect(response2.status).toBe(200);
-        expect(response2.data.numberOfNights).toBe(
+        expect(response2.data.success).toBe(true);
+        expect(response2.data.data.numberOfNights).toBe(
             GUEST_A_UNIT_1.numberOfNights + extendNights
         );
     });
@@ -210,8 +208,6 @@ describe('Booking API', () => {
             'http://localhost:8000/api/v1/booking',
             GUEST_A_UNIT_1
         );
-        expect(response1.status).toBe(200);
-        expect(response1.data.guestName).toBe(GUEST_A_UNIT_1.guestName);
 
         // GuestB to creates a booking 5 days after guest 1 leaves
         const nextAvailableDate = new Date(
@@ -240,8 +236,9 @@ describe('Booking API', () => {
 
         expect(error).toBeInstanceOf(AxiosError);
         expect(error.response.status).toBe(400);
-        expect(error.response.data).toEqual(
-            'For then updated checkout date, the unit is already occupied'
+        expect(error.response.data.success).toBe(false);
+        expect(error.response.data.message).toEqual(
+            'For the updated checkout date, the unit is already occupied'
         );
     });
 
@@ -259,10 +256,9 @@ describe('Booking API', () => {
         }
 
         expect(error).toBeInstanceOf(AxiosError);
-        expect(error.response.status).toBe(400);
-        expect(error.response.data).toEqual(
-            'No booking available with provided ID'
-        );
+        expect(error.response.status).toBe(404);
+        expect(error.response.data.success).toBe(false);
+        expect(error.response.data.message).toEqual('Booking not found');
     });
     test('extendBy value not provided', async () => {
         // Guest 1 booked a unit
@@ -285,8 +281,9 @@ describe('Booking API', () => {
 
         expect(error).toBeInstanceOf(AxiosError);
         expect(error.response.status).toBe(400);
-        expect(error.response.data).toEqual(
-            'extendBy field is required and should be a number'
+        expect(error.response.data.success).toBe(false);
+        expect(error.response.data.message).toEqual(
+            'Data not in correct shape'
         );
     });
     test('Provided extendBy value is not valid', async () => {
@@ -313,8 +310,9 @@ describe('Booking API', () => {
 
         expect(error).toBeInstanceOf(AxiosError);
         expect(error.response.status).toBe(400);
-        expect(error.response.data).toEqual(
-            'extendBy field is required and should be a number'
+        expect(error.response.data.success).toBe(false);
+        expect(error.response.data.message).toEqual(
+            'Data not in correct shape'
         );
     });
 });

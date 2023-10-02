@@ -136,7 +136,7 @@ const canExtendDate = async (booking: Booking, id: string) => {
     if (isUnitAvailableForUpdatedCheckoutDate.length > 0) {
         return {
             result: false,
-            reason: 'For then updated checkout date, the unit is already occupied',
+            reason: 'For the updated checkout date, the unit is already occupied',
         };
     }
     return { result: true, reason: 'OK' };
