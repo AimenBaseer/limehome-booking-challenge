@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import prisma from '../prisma';
 import { Booking } from '@prisma/client';
 import { addDays } from '../utils/date';
-import { isNumeric } from '../utils/checkType';
+import { ApiResponse } from '../types/apiResponse';
 
 const healthCheck = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(200).json({
@@ -144,23 +144,22 @@ const canExtendDate = async (booking: Booking, id: string) => {
 
 const extendBooking = async (
     req: Request,
-    res: Response,
+    res: Response<ApiResponse<Booking>>,
     next: NextFunction
 ) => {
     const { extendBy } = req.body;
     const { id } = req.params;
 
-    if (!extendBy || !isNumeric(extendBy)) {
-        return res
-            .status(400)
-            .json('extendBy field is required and should be a number');
-    }
     const booking = await prisma.booking.findFirst({
         where: { id: Number(id) },
     });
 
     if (!booking) {
-        return res.status(400).json('No booking available with provided ID');
+        return res.status(404).json({
+            message: 'Booking not found',
+            statusCode: 404,
+            success: false,
+        });
     }
 
     const newBooking = { ...booking };
@@ -171,7 +170,11 @@ const extendBooking = async (
     const extendable = await canExtendDate(newBooking, id);
 
     if (!extendable.result) {
-        return res.status(400).json(extendable.reason);
+        return res.status(400).json({
+            success: false,
+            statusCode: 400,
+            message: extendable.reason,
+        });
     }
 
     const bookingResult = await prisma.booking.update({
@@ -181,6 +184,11 @@ const extendBooking = async (
         data: newBooking,
     });
 
-    return res.status(200).json(bookingResult);
+    return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: 'Booking Extended',
+        data: bookingResult,
+    });
 };
 export default { healthCheck, createBooking, getBookings, extendBooking };

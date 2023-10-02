@@ -3,6 +3,11 @@ import express, { Express, NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import routes from './routes/bookings';
 import prisma from './prisma';
+import { ZodError } from 'zod';
+import {
+    handleOtherErrors,
+    handleValidationError,
+} from './controllers/middlewares/errors';
 
 export const app: Express = express();
 
@@ -23,11 +28,12 @@ app.get('/api-docs', swaggerUi.setup(swaggerDocument));
 app.use('/', routes);
 
 // Error handling
-app.use((req: Request, res: Response, next: NextFunction) => {
-    const error = new Error('Not found');
-    res.status(404).json({
-        message: error.message,
-    });
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    if (err instanceof ZodError) {
+        handleValidationError(err, req, res, next);
+    } else {
+        handleOtherErrors(err, req, res, next);
+    }
 });
 
 // Server
