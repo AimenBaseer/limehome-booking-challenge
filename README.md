@@ -6,7 +6,8 @@
 
 > **Note** 
 > - There would definitely be a few or a lot of things to be improved and I'd love to discuss them during the code review stage.
-> - Feel free to ask for any followup questions if there's some ambiguity/disagreement or unalignment of expectations, as I am quite open to clarify them.
+> - Feel free to ask for any follow-up questions if there's some ambiguity/disagreement or unalignment of expectations, as I am quite open to clarify them.
+> - I request you to be as thorough as you can with the feedback for my attempt.
 
 ---
 
