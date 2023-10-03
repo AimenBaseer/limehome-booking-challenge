@@ -1,3 +1,15 @@
+# ❗️❗️ Notes for reviewer
+
+- I deliberately didn't touch the existing codebase. e.g. I didn't sanitize the request body params for create booking endpoint. 
+- I have added a computed property `checkoutDate` so we don't have to compute it everytime while making a comparison whether the room is available or not _(it basically helps to find overlapping rooms)_
+  - As `checkoutDate` is a computed property, it's being recomputed in the prisma middleware every time a booking is created/updated.
+
+> **Note** 
+> - There would definitely be a few or a lot of things to be improved and I'd love to discuss them during the code review stage.
+> - Feel free to ask for any followup questions if there's some ambiguity/disagreement or unalignment of expectations, as I am quite open to clarify them.
+
+---
+
 # Backend Challenge - TypeScript
 
 > If you want, you may also complete this challenge in:
