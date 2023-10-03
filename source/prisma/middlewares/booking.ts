@@ -1,6 +1,6 @@
 import { Booking, Prisma, PrismaClient } from '@prisma/client';
-import { param } from '../routes/bookings';
-import { addDays } from '../utils/date';
+import { param } from '../../routes/bookings';
+import { addDays } from '../../utils/date';
 
 const prisma = new PrismaClient();
 

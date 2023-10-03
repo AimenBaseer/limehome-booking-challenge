@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { middlewares } from './middlewares';
+import { middlewares } from './prisma/middlewares';
 
 const prisma = new PrismaClient();
 
