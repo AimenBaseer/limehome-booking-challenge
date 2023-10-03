@@ -1,5 +1,7 @@
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from '@prisma/client';
+import { middlewares } from './middlewares';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
-export default prisma
+middlewares.forEach((middleware) => prisma.$use(middleware));
+export default prisma;
